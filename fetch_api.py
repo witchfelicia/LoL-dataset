@@ -69,7 +69,6 @@ def get_match_info(match_id):
 	# an example banned champion: 
 	# print(game_data["info"]["teams"][0]["bans"][0]["championId"])
 	
-	stats = {} # json as a list of json
 	bans = []
 	for team in game_data["info"]["teams"]: 
 		for ban in team["bans"]:
@@ -107,12 +106,20 @@ def get_match_info(match_id):
 	print(assists)
 
 
-
-	stats =
+	stats = {}
 	# what are we returning?
-	for i in range(0,10):
-
-
+	stats = {
+		"picks": picks,
+		"bans": bans,
+		"wins": winners,
+		"kills": kills,
+		"deaths": deaths,
+		"assists": assists
+	}
+	s = json.dumps(stats, indent = 4) 
+	f = open("peter_data", "w+")
+	f.write(s)
+	f.close()
 
 
 	"""
