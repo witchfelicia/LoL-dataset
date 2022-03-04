@@ -76,7 +76,6 @@ def get_match_info(match_id):
 	print(bans)
 
 	winners = []
-	#first_team_won = game_data["info"]["teams"][0]
 
 	for players in game_data["info"]["participants"]:
 		winners.append(players["win"])
