@@ -2,8 +2,24 @@
 Hello, this is just my notes on the process of querying Riot's API, written mainly for myself (because i will forget how I did it)
 
 Hopefully it helps you too <3
+
+## Endpoints
+That I used for this project are:
+1. PLATFORM_API_URL = 'na1.api.riotgames.com/lol/'
+    - the beginning of the API endpoint used to query summoner name
+2. REGION_API_URL = 'americas.api.riotgames.com/lol/'
+    - the beginning of the API endpoint for querying match data
+3. MATCH_ID_ENDPOINT = 'match/v5/matches/by-puuid/{puuid}/ids'
+    - continuation of endpoint that returns a list of match IDs from summoner name
+4. MATCH_INFORMATION_ENDPOINT = 'match/v5/matches/{matchId}'
+5. SUMMONER_BY_NAME = 'summoner/v4/summoners/by-name/'
+
+After you get your personal [API key](https://developer.riotgames.com/), you can generate HTTP request strings from the links I included above to try out [Riot's Developer API](https://developer.riotgames.com/apis).
+Trust me, it's fun!
+
 ## Requests
 I use the Python library [Requests](https://docs.python-requests.org/en/latest/user/quickstart/#make-a-request) to simplify the process of generating a HTTP request 
+
 ### Authentication
 Get your personal [API key](https://developer.riotgames.com/) from Riot, which is available for 24 hrs and you can make 20 requests every 1 second.
 
