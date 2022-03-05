@@ -145,39 +145,6 @@ def test(match_id):
 
 	rows = []
 
-	
-
-	"""picks = []
-	for players in game_data["info"]["participants"]:
-		picks.append(players["championName"])
-	print(picks)
-
-	bans = []
-	for team in game_data["info"]["teams"]: 
-		for ban in team["bans"]:
-			bans.append(ban["championId"])
-	print(bans)
-
-	for players in game_data["info"]["participants"]:
-		winners.append(players["win"])
-	print(winners)
-	
-	kills = []
-	for players in game_data["info"]["participants"]:
-		kills.append(players["kills"])
-	print(kills)
-
-	deaths = []
-	for players in game_data["info"]["participants"]:
-		deaths.append(players["deaths"])
-	print(deaths)
-
-	assists = []
-	for players in game_data["info"]["participants"]:
-		assists.append(players["assists"])
-	print(assists)
-	"""
-
 	index = 0
 	# populate each row with a player's data
 	for player in game_data["info"]["participants"]:
@@ -201,14 +168,17 @@ def test(match_id):
 		rows.append(row)
 		index += 1
 	
-	# print(row)
-	# print (game_data["info"]["teams"])
-	# print(game_data["info"]["teams"][0]["bans"][0]["championId"])
-	with open('peter_data_2.json', 'w') as s:
+	"""with open('peter_data_2.json', 'w') as s:
 		s.write(json.dumps(rows, indent = 4))
-	print(rows)
+	print(rows)"""
+	return rows
 
-test('NA1_4226412134')
+data = []
+data.append(test('NA1_4226412134'))
+data.append(test('NA1_4226345907'))
+
+with open('lots_of_data.json', 'w') as s:
+		s.write(json.dumps(data, indent = 4))
 # test
 # print(get_puuid(peter))
 # '-oXMqiG7Iz4jfAcbhR09AeP44KvBCtL9cEejVh-adG5LlQ0PEQFLJSwJV0Xk7upjLNKm5l3fygLhWA'
