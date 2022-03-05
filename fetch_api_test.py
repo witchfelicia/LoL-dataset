@@ -134,7 +134,6 @@ def get_match_info(match_id):
 # wonton
 # get_match_info('NA1_4236804806')
 
-
 def test(match_id):
 	get_url = 'https://' + REGION_URL + MATCH_INFORMATION_ENDPOINT
 	
@@ -174,8 +173,8 @@ def test(match_id):
 	return rows
 
 data = []
-data.append(test('NA1_4226412134'))
-data.append(test('NA1_4226345907'))
+data.extend(test('NA1_4226412134'))
+data.extend(test('NA1_4226345907'))
 
 with open('lots_of_data.json', 'w') as s:
 		s.write(json.dumps(data, indent = 4))
