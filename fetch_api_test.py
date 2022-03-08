@@ -4,6 +4,7 @@ import requests
 from dotenv import load_dotenv
 import json
 import os
+import time
 
 load_dotenv()
 
@@ -14,7 +15,12 @@ MATCH_ID_ENDPOINT = 'match/v5/matches/by-puuid/'
 MATCH_INFORMATION_ENDPOINT = 'match/v5/matches/'
 SUMMONER_BY_NAME = 'summoner/v4/summoners/by-name/'
 
-summoner_list = ['kwittens', 'NotWontonSoup', 'comfy%20gf', 'Mitaki', 'HowDoYouKite']
+# 25 summoners, half are plat, half are diamond
+summoner_list = ['kwittens', 'NotWontonSoup', 'comfy%20gf', 'Mitaki', 'HowDoYouKite',
+				'yk%20who%20it%20is', 'pinkbarbiekitten', 'YesHahaVeryGood', 'Swizurk', 'dg%20kat',
+				'%C3%A1scetic', 'atdrpzpf', 'dont%20forget', 'SPORTINWIL', 'CreepSteel',
+				'Danz0509', 'KEGGYTH%C3%89KEG', 'miny0ung', 'no%20service', 'Crow%20Kingg',
+				'lf%20duo%20yes', 'Talaine', 'My%20Throne', 'tempname1597065', 'GB%20Kun%C3%A2i']
 
 # returns puuid (str)
 def get_puuid(summoner_name):
@@ -27,16 +33,16 @@ def get_puuid(summoner_name):
 	return data['puuid']
 
 """
-get 10 match ids for each summoner
+get 20 match ids for each summoner
 	params:
 		puuid: uniquely identifies summoner
 	returns:
-		a list of ids of the last 10 ranks games played
+		a list of ids of the last 20 ranks games played
 """
 def get_matches(puuid):
 
 	get_url = 'https://' + REGION_URL + MATCH_ID_ENDPOINT
-	match_type = {'type':'ranked', 'start':'0', 'count':'10'} 
+	match_type = {'type':'ranked', 'start':'0', 'count':'20'} 
 		
 	r = requests.get(get_url + puuid + '/ids', 
 				headers={"X-Riot-Token": API_KEY},
@@ -66,6 +72,7 @@ def get_match_info(match_id):
 	index = 0
 	# populate each row with a player's data
 	for player in game_data["info"]["participants"]:
+		print(f"Adding {index}: {match_id}")
 		row = {}
 		# Ids
 		row["matches"] = match_id
@@ -108,13 +115,16 @@ def populate_dataset(list_of_summoners):
 	data = []
 
 	for summoner in list_of_summoners:
-		print("Adding %s's data!", summoner)
+		print(f"Adding {summoner}'s data!")
 		puuid = get_puuid(summoner)
 		matches = get_matches(puuid)
 		for match in matches:
 			data.extend(get_match_info(match))
 
-	with open('lots_of_data.json', 'w') as s:
+		# to not exceed Riot Games' API request rate limit
+		time.sleep(30)
+		
+	with open('lots_and_lots_of_data.json', 'w') as s:
 		s.write(json.dumps(data, indent = 4))
 
 

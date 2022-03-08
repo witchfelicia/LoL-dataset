@@ -86,4 +86,39 @@ def get_puuid(summoner_name):
 
 print(get_puuid(peter))
 ```
+## Methods
+### get_puuid 
+	param: string of a summoner name
+	returns a unique puuid that identifies a summoner (string)
+Notes:
+- Summoner names must be parsed for special characters beforehand. For example, 'Meth Damon'-> 'meth%20damon', 'áscetic' -> %C3%A1scetic
+- I test and obtain the unique summoner name strings using the [Riot API](https://developer.riotgames.com/apis#summoner-v4/GET_getBySummonerName) and copying the names since I'm not familiar with unique character encoding
 
+### id_to_name
+Converts champion ID to the name 
+	param: int uniquely identifying champion
+	returns champion name when given an id
+
+### get_matches
+	params:
+		puuid: uniquely identifies summoner
+	returns:
+		a list of ids of the last 20 ranked games played
+
+### get_match_info
+	params:
+		match ID: uniquely identifies a game
+	returns:
+		a dictionary that contains picks, bans, wins, and kda
+This dictionary will represent a row later in our dataset (:
+
+### populate_dataset
+
+generates 5000 rows of game data from:
+25 (summoners) x 20 (of their ranked games) x 10 (for the # of players per game)
+
+returns: writes to the "lots_and_lots_of_data.json"
+
+Note: 
+- We will use the `matches` and `picks` columns to uniquely identify a row of data to account for duplicates.
+- We convert the "lots_and_lots_of_data.json" file in Colab using Pandas' [to_csv()](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_csv.html) 
