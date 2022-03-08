@@ -90,6 +90,16 @@ def get_match_info(match_id):
 	return rows
 
 """
+# possible columns to add:
+
+skillshots = []
+for players in game_data["info"]["participants"]:
+skillshots.append(players["challenges"]["skillshotsDodged"])
+
+print(skillshots)
+"""
+
+"""
 generate 500 rows of game data from:
 	5 (summoners) x 10 (of their ranked games) x 10 (for the # of players per game)
 	returns: writes to the "lots_of_data.json"
@@ -109,35 +119,3 @@ def populate_dataset(list_of_summoners):
 
 
 populate_dataset(summoner_list)
-
-# test
-# print(get_puuid(peter))
-# '-oXMqiG7Iz4jfAcbhR09AeP44KvBCtL9cEejVh-adG5LlQ0PEQFLJSwJV0Xk7upjLNKm5l3fygLhWA'
-
-#test
-# print(get_matches('-oXMqiG7Iz4jfAcbhR09AeP44KvBCtL9cEejVh-adG5LlQ0PEQFLJSwJV0Xk7upjLNKm5l3fygLhWA'))
-# ['NA1_4226412134', 'NA1_4226345907', 'NA1_4218138569', 'NA1_4218105594', 'NA1_4211723295', 'NA1_4211687221', 'NA1_4211653877', 'NA1_4209587154', 'NA1_4209487127', 'NA1_4209475699', 'NA1_4208089388', 'NA1_4208092029', 'NA1_4207995324', 'NA1_4200313716', 'NA1_4200273950', 'NA1_4200232990', 'NA1_4200174394', 'NA1_4199167723', 'NA1_4199144987', 'NA1_4199171572']
-
-# peter's match info
-# get_match_info('NA1_4226412134')
-# wonton
-# get_match_info('NA1_4236804806')
-
-"""data = []
-data.extend(test('NA1_4226412134'))
-data.extend(test('NA1_4226345907'))
-
-with open('lots_of_data.json', 'w') as s:
-		s.write(json.dumps(data, indent = 4))"""
-
-"""
-skillshots = []
-for players in game_data["info"]["participants"]:
-skillshots.append(players["challenges"]["skillshotsDodged"])
-
-print(skillshots)
-"""
-
-# print(id_to_name('23'))
-
-# get_match_info('NA1_4226412134')
