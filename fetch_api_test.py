@@ -1,12 +1,13 @@
 from webbrowser import get
-from lookup import id_to_name
-from helper import fill_json
-from summoners import summoner_list
 import requests
 from dotenv import load_dotenv
 import json
 import os
 import time
+from lookup import id_to_name
+from helper import fill_json
+from summoners import summoner_list
+from summoners import check_names_are_still_valid
 
 load_dotenv()
 
@@ -117,6 +118,9 @@ generate 5000 rows of game data from:
 """
 def populate_dataset(list_of_summoners):
 	data = []
+
+	if not check_names_are_still_valid(list_of_summoners):
+		quit()
 
 	for index, summoner in enumerate(list_of_summoners):
 		print(f"Adding {summoner}'s data!")

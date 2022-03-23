@@ -31,7 +31,7 @@ def check_names_are_still_valid(s_list):
             print(f"Summoner {summoner_name} changed their name!")
             print(data)
             print("Go update!")
+            return False
     
     print("All names are still valid! (:")
-
-check_names_are_still_valid(summoner_list)
+    return True
