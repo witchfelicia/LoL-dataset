@@ -117,11 +117,10 @@ generate 5000 rows of game data from:
 	returns: writes to the "lots_and_lots_of_data.json"
 """
 def populate_dataset(list_of_summoners):
-	data = []
-
 	if not check_names_are_still_valid(list_of_summoners):
 		quit()
 
+	data = []
 	for index, summoner in enumerate(list_of_summoners):
 		print(f"Adding {summoner}'s data!")
 		puuid = get_puuid(summoner)

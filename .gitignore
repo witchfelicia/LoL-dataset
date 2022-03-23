@@ -2,3 +2,5 @@
 .DS_Store
 lots_of_data.json
 lots_and_lots_of_data.json
+lane_opponent.json
+__pycache__
