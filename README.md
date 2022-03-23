@@ -109,7 +109,7 @@ Converts champion ID to the name
 	params:
 		match ID: uniquely identifies a game
 	returns:
-		a dictionary that contains picks, bans, wins, and kda
+		a dictionary that contains picks, bans, wins, kda, and gold earned
 This dictionary will represent a row later in our dataset (:
 
 ### populate_dataset()

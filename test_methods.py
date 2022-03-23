@@ -1,14 +1,15 @@
 # just a misc. file to test individual functions for bugs
 
 import json
-
 from fetch_api_test import get_puuid
 from fetch_api_test import get_matches
+
 from fetch_api_test import get_match_info
 from lookup import id_to_name
 
 peter = 'meth%20damon'
 
+"""
 # test
 print(get_puuid(peter))
 # '-oXMqiG7Iz4jfAcbhR09AeP44KvBCtL9cEejVh-adG5LlQ0PEQFLJSwJV0Xk7upjLNKm5l3fygLhWA'
@@ -27,4 +28,6 @@ data.extend(get_match_info('NA1_4226345907'))
 with open('test_data.json', 'w') as s:
 		s.write(json.dumps(data, indent = 4))
 
-print(id_to_name('23'))
+print(id_to_name('23'))"""
+
+# check if all of the summoner names are still valid
