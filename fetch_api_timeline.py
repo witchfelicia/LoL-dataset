@@ -16,27 +16,42 @@ API_KEY = os.getenv("LEAGUE_API_KEY")
 
 num_requests = 0
 
+# Check to ensure we didn't exceed the API request limit for every 2 min
 def reached_request_limit():
     global num_requests
     if num_requests >= 96:
+        print(f"Made {num_requests} requests. Sleep for 2 min.")
         num_requests = 0
-        print("Made 100 requests. Sleep for 2 min.")
+        
         return True
     else:
         return False
 
-# get champion name + position played columns
-def fetch_position(match_id):
-    if reached_request_limit():
-        time.sleep(120)
-        print("Resuming from fetch position")
-    url = 'https://' + REGION_URL + MATCH_INFORMATION_ENDPOINT
-    r2 = requests.get(url + match_id,
-	 headers={"X-Riot-Token": API_KEY})
+def make_and_verify_request(get_url):
+    r = requests.get(get_url, 
+		headers={"X-Riot-Token": API_KEY})
+    
     global num_requests
     num_requests += 1
+
+    # Verify
+    if r.status_code == requests.codes.ok:
+        return r.json()
+
+    else:
+        print(f"Something happened with the request {get_url}")
+        print(f"Error code: {r.status_code}")
+        print(f"Response body: {r.json}")
+        return ""
+
+# get champion name + position played columns
+def get_position(match_id):
+    if reached_request_limit():
+        time.sleep(120)
+        print("Resuming from get_position")
+    url = 'https://' + REGION_URL + MATCH_INFORMATION_ENDPOINT + match_id
     
-    game_data = r2.json()
+    game_data = make_and_verify_request(url)
 
     # fill cols with champion name + position
     champion = []
@@ -47,36 +62,40 @@ def fetch_position(match_id):
     
     return champion, position_played
 
-def get_game_data(match_id):
+# get column data of players' gold at 10 min
+def get_ten_min_gold(game_data):
+    gold_columns = []
+    player_status = {}
+
+    # game duration > 10 min
+    if len(game_data) > 9:
+        player_status = game_data[10]['participantFrames']
+    else:
+        player_status = game_data[-1]['participantFrames']
+        print(f"game ended before 10 min. Last event was recorded at: {game_data[-1]['timestamp']} milliseconds.")
+    
+    # collect gold earned at 10 min
+    for each in player_status.values():
+        gold_columns.append(each['totalGold'])
+
+    return gold_columns
+
+def fetch_game_data(match_id):
     # to not overwhelm the API
     if reached_request_limit():
         time.sleep(120)
-        print("resume from get_game_data")
+        print("resume from fetch_game_data")
 
-    get_url = 'https://' + REGION_URL + MATCH_INFORMATION_ENDPOINT
-    r = requests.get(get_url + match_id + '/timeline', 
-				headers={"X-Riot-Token": API_KEY})
-
-    # TODO: verify request
-    if r.status_code == requests.codes.ok:
-        print(f"Request {get_url + match_id + '/timeline'} was successful!")
-    else:
-        print(f"Something happened with the request {get_url + match_id + '/timeline'}")
-        print(f"Error code: {r.status_code}")
-        print(f"Response body: {r.json}")
+    get_url = 'https://' + REGION_URL + MATCH_INFORMATION_ENDPOINT + match_id + '/timeline'
+    data = make_and_verify_request(get_url) # use requests.get()
     
-    data = r.json()
+    # if request failed
+    if data == "":
+        exit()
 
-    global num_requests
-    num_requests += 1
-
-    champion, position_played = fetch_position(match_id)
+    champion, position_played = get_position(match_id)
     
-    ten_min_gold = []
-    for index in range(1,11):
-        # TODO: better method of indexing data using data.get()
-        print(data['info']['frames'][10]['participantFrames'][str(index)])
-        ten_min_gold.append(data['info']['frames'][10]['participantFrames'][str(index)]['totalGold'])
+    ten_min_gold = get_ten_min_gold(data['info']['frames'])
     
     team = ["blue"] * 5
     for num in range(0, 5):
@@ -89,6 +108,7 @@ def get_game_data(match_id):
                 opponent_ten_min_gold[index] = ten_min_gold[jndex]
                 opponent_ten_min_gold[jndex] = ten_min_gold[index]
                 break;
+
     return({
         "champion": champion,
         "positionPlayed": position_played,
@@ -97,25 +117,29 @@ def get_game_data(match_id):
         "team": team
     })
 
-# get_game_data('NA1_4226412134')
+# fetch_game_data('NA1_4253447957')
+# print (get_position('NA1_4253447957'))
 
-def get_timeline_data():
+def populate_timeline_data():
     data = []
     for index, summoner in enumerate(summoner_list):
         global num_requests
 
         if reached_request_limit():
             time.sleep(120)
-            print("_______________________")
             print("Resume from get_timeline.")
 
         print(f"Adding {summoner}'s data!")
+
+        if reached_request_limit():
+            time.sleep(120)
+            print("Resuming from get_timeline.")
         puuid = get_puuid(summoner)
         num_requests += 1
         matches = get_matches(puuid)
         num_requests += 1
         for match in matches:
-            data.extend(get_game_data(match))
+            data.extend(fetch_game_data(match))
 
         # to not exceed Riot Games' API request rate limit
         # needs 16 min and 40 seconds to finish
@@ -124,4 +148,4 @@ def get_timeline_data():
     with open('lane_opponent.json', 'w') as s:
         s.write(json.dumps(data, indent = 4))
 
-get_timeline_data()
+populate_timeline_data()
