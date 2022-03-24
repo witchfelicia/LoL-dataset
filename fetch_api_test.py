@@ -143,4 +143,4 @@ def populate_dataset(list_of_summoners):
 		s.write(json.dumps(data, indent = 4))
 
 
-populate_dataset(summoner_list)
+# populate_dataset(summoner_list)
