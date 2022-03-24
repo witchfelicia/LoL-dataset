@@ -18,15 +18,18 @@ num_requests = 0
 
 def reached_request_limit():
     global num_requests
-    print(num_requests)
-    if num_requests >= 99:
+    if num_requests >= 96:
         num_requests = 0
+        print("Made 100 requests. Sleep for 2 min.")
         return True
     else:
         return False
 
 # get champion name + position played columns
 def fetch_position(match_id):
+    if reached_request_limit():
+        time.sleep(120)
+        print("Resuming from fetch position")
     url = 'https://' + REGION_URL + MATCH_INFORMATION_ENDPOINT
     r2 = requests.get(url + match_id,
 	 headers={"X-Riot-Token": API_KEY})
@@ -45,25 +48,34 @@ def fetch_position(match_id):
     return champion, position_played
 
 def get_game_data(match_id):
-    print("begin")
     # to not overwhelm the API
-    if reached_request_limit:
-        print("Made 100 requests. Sleep for 2 min.")
+    if reached_request_limit():
         time.sleep(120)
+        print("resume from get_game_data")
 
     get_url = 'https://' + REGION_URL + MATCH_INFORMATION_ENDPOINT
     r = requests.get(get_url + match_id + '/timeline', 
 				headers={"X-Riot-Token": API_KEY})
 
+    # TODO: verify request
+    if r.status_code == requests.codes.ok:
+        print(f"Request {get_url + match_id + '/timeline'} was successful!")
+    else:
+        print(f"Something happened with the request {get_url + match_id + '/timeline'}")
+        print(f"Error code: {r.status_code}")
+        print(f"Response body: {r.json}")
+    
     data = r.json()
+
     global num_requests
     num_requests += 1
 
-    # TODO: HEREEE
     champion, position_played = fetch_position(match_id)
     
     ten_min_gold = []
     for index in range(1,11):
+        # TODO: better method of indexing data using data.get()
+        print(data['info']['frames'][10]['participantFrames'][str(index)])
         ten_min_gold.append(data['info']['frames'][10]['participantFrames'][str(index)]['totalGold'])
     
     team = ["blue"] * 5
@@ -85,14 +97,23 @@ def get_game_data(match_id):
         "team": team
     })
 
-print(get_game_data('NA1_4226412134'))
+# get_game_data('NA1_4226412134')
 
 def get_timeline_data():
     data = []
     for index, summoner in enumerate(summoner_list):
+        global num_requests
+
+        if reached_request_limit():
+            time.sleep(120)
+            print("_______________________")
+            print("Resume from get_timeline.")
+
         print(f"Adding {summoner}'s data!")
         puuid = get_puuid(summoner)
+        num_requests += 1
         matches = get_matches(puuid)
+        num_requests += 1
         for match in matches:
             data.extend(get_game_data(match))
 
@@ -103,4 +124,4 @@ def get_timeline_data():
     with open('lane_opponent.json', 'w') as s:
         s.write(json.dumps(data, indent = 4))
 
-# get_timeline_data()
+get_timeline_data()

@@ -1,3 +1,4 @@
+from tabnanny import check
 import requests
 import os
 import json
@@ -35,3 +36,4 @@ def check_names_are_still_valid(s_list):
     
     print("All names are still valid! (:")
     return True
+
