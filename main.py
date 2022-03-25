@@ -7,6 +7,7 @@ import time
 from lookup import id_to_name
 from helper import fill_json
 from helper import get_ten_min_gold
+from helper import concat_json
 from summoner_list import summoner_list
 
 load_dotenv()
@@ -24,7 +25,7 @@ total_requests = 0
 # Check to ensure we didn't exceed the API request limit for every 2 min
 def reached_request_limit():
 	global num_requests
-	if num_requests >= 95:
+	if num_requests >= 98:
 		print(f"Made {num_requests} requests. Sleep for 2 min.")
 		global total_requests
 		total_requests += num_requests
@@ -146,9 +147,9 @@ def get_match_info(match_id):
 		row = {}
 		# Ids
 		matches.append(match_id) 
-		picks.append(player["championName"])
+		picks.append(player.get("championName"))
 
-		position.append(player['individualPosition'])
+		position.append(player.get('individualPosition'))
 		# there are 2 teams
 		if index < 5:
 			champion_id = game_data["info"]["teams"][0]["bans"][index]["championId"]
@@ -160,12 +161,12 @@ def get_match_info(match_id):
 			bans.append(id_to_name(champion_id))
 			teams.append("red")
 
-		kills.append(player["kills"])
-		deaths.append(player["deaths"])
-		assists.append(player["assists"])
-		gold.append(player["goldEarned"])
-		challenges.append(fill_json(player["challenges"]))
-		win.append(player["win"])
+		kills.append(player.get("kills"))
+		deaths.append(player.get("deaths"))
+		assists.append(player.get("assists"))
+		gold.append(player.get("goldEarned"))
+		challenges.append(fill_json(player.get("challenges", {})))
+		win.append(player.get("win"))
 
 		index += 1
 	
@@ -188,14 +189,16 @@ def get_match_info(match_id):
 		"win": win
 	}
 
-get_match_info('NA1_4253447957')
+# print(get_match_info('NA1_4250997412'))
+s = ['-oXMqiG7Iz4jfAcbhR09AeP44KvBCtL9cEejVh-adG5LlQ0PEQFLJSwJV0Xk7upjLNKm5l3fygLhWA']
 """
 generate 5000 rows of game data from:
 	25 (summoners) x 20 (of their ranked games) x 10 (for the # of players per game)
 	returns: writes to the "lots_and_lots_of_data.json"
 """
 def populate_dataset(summoner_list):
-	data = []
+	data = {}
+	"""
 	for index, summoner in enumerate(summoner_list):
 		print(f"Adding {index}/{len(summoner_list)} summoner data!")
 		matches = get_matches(summoner)
@@ -207,8 +210,15 @@ def populate_dataset(summoner_list):
 		print(f"Finished {index+1}/{len(summoner_list)}")
 		global num_requests
 		print(f"Made {num_requests} requests.")
-		
-	with open('lots_and_lots_of_data.json', 'w') as s:
+
+	"""
+
+	matches = ['NA1_4250993838','NA1_4250997412']
+	for match in matches:
+		concat_json(data, get_match_info(match))
+	
+	with open('lots_of_data.json', 'w') as s:
+	#with open('lots_and_lots_of_data.json', 'w') as s:
 		s.write(json.dumps(data, indent = 4))
 
-# populate_dataset()
+populate_dataset(s)
