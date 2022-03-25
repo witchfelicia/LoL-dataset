@@ -190,7 +190,7 @@ def get_match_info(match_id):
 	}
 
 # print(get_match_info('NA1_4250997412'))
-s = ['-oXMqiG7Iz4jfAcbhR09AeP44KvBCtL9cEejVh-adG5LlQ0PEQFLJSwJV0Xk7upjLNKm5l3fygLhWA']
+# s = ['-oXMqiG7Iz4jfAcbhR09AeP44KvBCtL9cEejVh-adG5LlQ0PEQFLJSwJV0Xk7upjLNKm5l3fygLhWA']
 """
 generate 5000 rows of game data from:
 	25 (summoners) x 20 (of their ranked games) x 10 (for the # of players per game)
@@ -198,27 +198,23 @@ generate 5000 rows of game data from:
 """
 def populate_dataset(summoner_list):
 	data = {}
-	"""
+	responses = []
 	for index, summoner in enumerate(summoner_list):
 		print(f"Adding {index}/{len(summoner_list)} summoner data!")
 		matches = get_matches(summoner)
 		for match in matches:
-			data.extend(get_match_info(match))
+			responses.append(get_match_info(match))
 
 		# to not exceed Riot Games' API request rate limit
 		# needs 16 min and 40 seconds to finish
 		print(f"Finished {index+1}/{len(summoner_list)}")
 		global num_requests
 		print(f"Made {num_requests} requests.")
-
-	"""
-
-	matches = ['NA1_4250993838','NA1_4250997412']
-	for match in matches:
-		concat_json(data, get_match_info(match))
 	
-	with open('lots_of_data.json', 'w') as s:
-	#with open('lots_and_lots_of_data.json', 'w') as s:
+	for response in responses:
+		data = concat_json(data, response)
+
+	with open('lots_and_lots_of_data.json', 'w') as s:
 		s.write(json.dumps(data, indent = 4))
 
-populate_dataset(s)
+populate_dataset(summoner_list)

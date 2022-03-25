@@ -32,8 +32,13 @@ def get_ten_min_gold(game_data):
     return gold_columns
 
 # combine JSON {a: [1, 2]} + {a: [3, 4]} -> {a: [1, 2, 3, 4]}
-# copied from Stackoverflow -> https://stackoverflow.com/a/66060526
+
 def concat_json(json_obj_1, json_obj_2):
+    if json_obj_1 == {}:
+        # swap if first one empty
+        return json_obj_2
+    # copied from Stackoverflow -> https://stackoverflow.com/a/66060526
+
     hold_json_obj = {}
     # We'll loop through every item in the json_obj_1 dictionary
     for item_1 in json_obj_1:
@@ -54,11 +59,5 @@ def concat_json(json_obj_1, json_obj_2):
                 if item_2 not in hold_json_obj:
                     #add the ummatched array to hold_json_obj
                     hold_json_obj[item_2] = json_obj_2[item_2]
-
-    print(f"Hold Jsons : {hold_json_obj}")
-    print(f"json obj 1 {json_obj_1}")
-    json_obj_1.update(hold_json_obj)
-    print(f"updated json_obj_1: {json_obj_1}")
     
-    return json_obj_1
-
+    return hold_json_obj
