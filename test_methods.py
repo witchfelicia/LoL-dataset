@@ -1,10 +1,10 @@
 # just a misc. file to test individual functions for bugs
 
 import json
-from fetch_api_test import get_puuid
-from fetch_api_test import get_matches
+from main import get_puuid
+from main import get_matches
 
-from fetch_api_test import get_match_info
+from main import get_match_info
 from lookup import id_to_name
 
 peter = 'meth%20damon'
